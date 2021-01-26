@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +21,23 @@ namespace BlazingPizza.Client.Pages
         [Inject]
         public OrderState OrderState { get; set; }
 
+        [Inject]
+        public IJSRuntime JS { get; set; }
+
         List<PizzaSpecial> specials;        
 
         protected override async Task OnInitializedAsync()
         {
             specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>("specials");
-        }        
+        }
+
+        async Task RemovePizza(Pizza configuredPizza)
+        {
+            if (await JS.Confirm($"Remove {configuredPizza.Special.Name} pizza from the order?"))
+            {
+                OrderState.RemoveConfiguredPizza(configuredPizza);
+            }
+        }
 
     }
 }
