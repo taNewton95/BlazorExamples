@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BlazingPizza.Client.Pages
 {
-    public partial class Index
+    public partial class Checkout
     {
 
         [Inject]
@@ -20,12 +20,15 @@ namespace BlazingPizza.Client.Pages
         [Inject]
         public OrderState OrderState { get; set; }
 
-        List<PizzaSpecial> specials;        
-
-        protected override async Task OnInitializedAsync()
+        async Task PlaceOrder()
         {
-            specials = await HttpClient.GetFromJsonAsync<List<PizzaSpecial>>("specials");
-        }        
+            OrderState.isSubmitting = true;
+            var response = await HttpClient.PostAsJsonAsync("orders", OrderState.order);
+            var newOrderId = await response.Content.ReadFromJsonAsync<int>();
+            OrderState.ResetOrder();
+            NavigationManager.NavigateTo($"myorders/{newOrderId}");
+            OrderState.isSubmitting = false;
+        }
 
     }
 }

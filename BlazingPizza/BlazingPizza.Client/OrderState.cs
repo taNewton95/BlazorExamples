@@ -11,6 +11,7 @@ namespace BlazingPizza.Client
         public Pizza configuringPizza;
         public bool showingConfigureDialog;
         public Order order = new Order();
+        public bool isSubmitting;
 
         public void ShowConfigurePizzaDialog(PizzaSpecial special)
         {
