@@ -1,5 +1,7 @@
 ﻿@page "/checkout"
 
+@attribute [Authorize]
+
 <div class="main">
     <EditForm Model="OrderState.order.DeliveryAddress" OnValidSubmit="PlaceOrder">
         <div class="checkout-cols">

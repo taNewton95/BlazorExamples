@@ -1,0 +1,6 @@
+﻿@page "/authentication/{action}"
+
+<RemoteAuthenticatorViewCore TAuthenticationState="PizzaAuthenticationState"
+                             AuthenticationState="RemoteAuthenticationState"
+                             OnLogInSucceeded="RestorePizza"
+                             Action="@Action" />

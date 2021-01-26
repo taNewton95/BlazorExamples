@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace BlazingPizza.Client.Pages
     {
 
         [Inject]
-        public HttpClient HttpClient { get; set; }
+        public OrdersClient OrdersClient { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -23,10 +24,16 @@ namespace BlazingPizza.Client.Pages
         async Task PlaceOrder()
         {
             OrderState.isSubmitting = true;
-            var response = await HttpClient.PostAsJsonAsync("orders", OrderState.order);
-            var newOrderId = await response.Content.ReadFromJsonAsync<int>();
-            OrderState.ResetOrder();
-            NavigationManager.NavigateTo($"myorders/{newOrderId}");
+            try
+            {
+                var newOrderId = await OrdersClient.PlaceOrder(OrderState.order);
+                OrderState.ResetOrder();
+                NavigationManager.NavigateTo($"myorders/{newOrderId}");
+            }
+            catch (AccessTokenNotAvailableException ex)
+            {
+                ex.Redirect();
+            }
             OrderState.isSubmitting = false;
         }
 

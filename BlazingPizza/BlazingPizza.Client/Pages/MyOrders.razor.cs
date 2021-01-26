@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,20 @@ namespace BlazingPizza.Client.Pages
     {
 
         [Inject]
-        public HttpClient HttpClient { get; set; }
+        public OrdersClient OrdersClient { get; set; }
 
         IEnumerable<OrderWithStatus> ordersWithStatus;
 
         protected override async Task OnParametersSetAsync()
         {
-            ordersWithStatus = await HttpClient.GetFromJsonAsync<List<OrderWithStatus>>("orders");
+            try
+            {
+                ordersWithStatus = await OrdersClient.GetOrders();
+            }
+            catch (AccessTokenNotAvailableException ex)
+            {
+                ex.Redirect();
+            }
         }
 
     }

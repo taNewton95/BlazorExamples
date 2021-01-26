@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace BlazingPizza.Client.Pages
     {
 
         [Inject]
-        public HttpClient HttpClient { get; set; }
+        public OrdersClient OrdersClient { get; set; }
 
         [Parameter] public int OrderId { get; set; }
 
@@ -38,7 +39,7 @@ namespace BlazingPizza.Client.Pages
                 try
                 {
                     invalidOrder = false;
-                    orderWithStatus = await HttpClient.GetFromJsonAsync<OrderWithStatus>($"orders/{OrderId}");
+                    orderWithStatus = await OrdersClient.GetOrder(OrderId);
                     StateHasChanged();
 
                     if (orderWithStatus.IsDelivered)
@@ -49,6 +50,11 @@ namespace BlazingPizza.Client.Pages
                     {
                         await Task.Delay(4000);
                     }
+                }
+                catch (AccessTokenNotAvailableException ex)
+                {
+                    pollingCancellationToken.Cancel();
+                    ex.Redirect();
                 }
                 catch (Exception ex)
                 {
