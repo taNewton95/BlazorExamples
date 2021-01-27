@@ -1,0 +1,38 @@
+﻿<div class="alert @AlertClass" role="alert">
+    @if (!String.IsNullOrEmpty(Title))
+    {
+        <h4 class="alert-heading">@Title</h4>
+        <div>@ChildContent</div>
+    }
+    else
+    {
+        @ChildContent
+    }
+</div>
+
+@code {
+
+    public enum AlertType
+    {
+        Primary,
+        Secondary,
+        Success,
+        Danger,
+        Warning,
+        Info,
+        Light,
+        Dark
+    }
+
+    [Parameter]
+    public AlertType Type { get; set; } = AlertType.Primary;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    string AlertClass => $"alert-{Type.ToString().ToLower()}";
+
+}
